@@ -20,7 +20,7 @@ Simply wrap child components with this component and dynamically change them to 
 
 | Prop | PropType | Description |
 | ---- | -------- | ----------- |
-| duration | React.PropTypes.number | Duration of animation |
+| springConfig | React.PropTypes.object | A {stiffness, damping} for react-motion ([details](https://github.com/chenglou/react-motion#--spring-val-number-config-springhelperconfig--opaqueconfig)) |
 | fade | React.PropTypes.bool | Should children fade on enter/leave |
 | scale | React.PropTypes.bool | Should children scale on enter/leave |
 | intial | React.PropTypes.bool | Should scale/fade occur on first load |
