@@ -35,7 +35,9 @@ const Shuffle = React.createClass({
   },
 
   componentWillUnmount() {
-    ReactDom.findDOMNode(this.refs.container).removeChild(this._portalNode);
+    if (this.container !== null){
+      this.container.removeChild(this._portalNode);
+    }
     window.removeEventListener('resize', this._renderClones);
   },
 
@@ -48,7 +50,9 @@ const Shuffle = React.createClass({
     this._portalNode.style.left = '0px';
     this._portalNode.style.top = '0px';
     this._portalNode.style.position = 'absolute';
-    ReactDom.findDOMNode(this.refs.container).appendChild(this._portalNode);
+    if (this.container !== null){
+      this.container.appendChild(this._portalNode);
+    }
   },
 
   _renderClones() {
@@ -56,7 +60,7 @@ const Shuffle = React.createClass({
     let defaultStyles = []
     React.Children.forEach(this.props.children, child => {
       let ref = child.key;
-      let node = ReactDom.findDOMNode(this.refs[ref]);
+      let node = this._refs[ref];
       let rect = node.getBoundingClientRect();
       let computedStyle = getComputedStyle(node);
       let marginTop = parseInt(computedStyle.marginTop, 10);
@@ -88,7 +92,7 @@ const Shuffle = React.createClass({
       })
     })
 
-    ReactDom.render((
+    ReactDom.unstable_renderSubtreeIntoContainer(this,(
       <TransitionMotion
         willLeave={style => ({
           ...style.style,
@@ -125,12 +129,15 @@ const Shuffle = React.createClass({
   },
   _childrenWithRefs() {
     return React.Children.map(this.props.children, (child) =>
-      React.cloneElement(child, {ref: child.key})
+      React.cloneElement(child,{ref: (r) => {
+        this._refs = this._refs || {}
+        this._refs[child.key] = r
+      }})
     );
   },
   render() {
     return (
-      <div ref="container" style={{position: 'relative'}} {...this.props}>
+      <div ref={(ref) => this.container = ref} style={{position: 'relative'}} {...this.props}>
         <div style={{opacity: 0}}>
           {this._childrenWithRefs()}
         </div>
